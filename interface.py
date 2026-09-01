@@ -15,6 +15,7 @@ from catalogar_arquivos import (carregar_pastas_catalogadas, salvar_pastas_catal
 from consultar_dados import listar_todos_programas, listar_planilhas_disponiveis, listar_abas_planilha
 from resumir import listar_arquivos_disponiveis, resumir_arquivo
 from manter_modelo_quente import iniciar_batimento
+from indexar_historico import indexar_historico
 
 # Formato/fonte disponível em cada categoria da Etapa 1 — (rótulo do botão, valor interno)
 FORMATOS_POR_CATEGORIA = {
@@ -68,7 +69,7 @@ COMBINACOES_COM_DOCUMENTO = {("consultar", "documento"), ("criar", "documento")}
 COMBINACOES_COM_PLANILHA = {("consultar", "planilha"), ("criar", "planilha")}
 COMBINACAO_COM_PASTA = ("procurar", "pasta")
 
-st.set_page_config(page_title="Jarvis Pessoal", page_icon="🤖")
+st.set_page_config(page_title="PROJECT Jarvis", page_icon="🤖")
 
 
 def executar_acao_abrir(caminho_arquivo: str) -> str:
@@ -100,6 +101,10 @@ def executar_acao_abrir(caminho_arquivo: str) -> str:
         return f"Não consegui abrir '{caminho_arquivo}': {erro}"
 
 
+def garantir_pasta_documentos():
+    os.makedirs(PASTA_DOCUMENTOS, exist_ok=True)
+
+
 def executar_acao_indexar(caminho_arquivo: str, colecao) -> str:
     """Copia o arquivo catalogado pra `Docs/` (só se ainda não estiver lá) e indexa — decisão do
     usuário (2026-08-25): reaproveita o pipeline de upload existente, mantém `Docs/` como única
@@ -115,6 +120,7 @@ def executar_acao_indexar(caminho_arquivo: str, colecao) -> str:
         return (f"Já existe um arquivo chamado '{nome_arquivo}' em Docs/ — renomeie um dos dois "
                 f"antes de indexar, pra não arriscar sobrescrever o que já está lá.")
     if not ja_esta_em_docs:
+        garantir_pasta_documentos()
         shutil.copy2(caminho_arquivo, destino)
     return indexar_arquivo(nome_arquivo, colecao)
 
@@ -237,6 +243,7 @@ with st.sidebar:
         if extensao not in EXTENSOES_PERMITIDAS:
             st.error(f"Formato '{extensao}' não é suportado. Use PDF, TXT, DOCX ou XLSX.")
         else:
+            garantir_pasta_documentos()
             caminho_destino = os.path.join(PASTA_DOCUMENTOS, arquivo_upload.name)
             with open(caminho_destino, "wb") as f:
                 f.write(arquivo_upload.getbuffer())
@@ -294,7 +301,7 @@ with st.sidebar:
         st.success(st.session_state.mensagem_pasta)
         st.session_state.mensagem_pasta = None
 
-st.title("Jarvis Pessoal")
+st.title("PROJECT Jarvis")
 
 # --- Etapa 1: Categoria ---
 if st.session_state.funil_categoria is None:
@@ -518,6 +525,15 @@ else:
                 # De propósito NÃO entra em st.session_state.historico: é uma listagem longa e
                 # mecânica, que só inflaria o contexto da reformulação de pergunta seguinte.
                 st.rerun()
+
+        # Mesmo princípio do atalho de "programas" acima: indexar não é uma pergunta, é ação
+        # mecânica. Sem este botão não havia NENHUM jeito de indexar histórico pela interface —
+        # só rodando `python indexar_historico.py` direto no terminal.
+        if (categoria, formato) == ("consultar", "historico"):
+            if st.button("🔄 Indexar histórico agora", key="botao_indexar_historico"):
+                with st.spinner("Copiando e indexando histórico do navegador..."):
+                    resultado_indexacao = indexar_historico()
+                st.success(resultado_indexacao)
 
         for indice, mensagem in enumerate(st.session_state.mensagens):
             with st.chat_message(mensagem["papel"]):
