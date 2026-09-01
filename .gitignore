@@ -28,3 +28,5 @@ streamlit_err.log
 empty_stdin.txt
 .pytest_cache/
 .claude/settings.local.json
+# --- Planos/PROJECT Jarvis: rascunhos internos, não fazem parte do produto ---
+Planos/
