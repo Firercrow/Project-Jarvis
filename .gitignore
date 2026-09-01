@@ -1,0 +1,30 @@
+﻿# --- DADOS PESSOAIS: nunca sair do PC (motivo de existir deste arquivo) ---
+# O Jarvis é um assistente LOCAL: ele cataloga o disco inteiro, lê documentos
+# pessoais e indexa o histórico do navegador. Publicar qualquer coisa abaixo
+# significa publicar a vida do dono da máquina, não código.
+#
+# catalogo_arquivos.db .... listagem de TODOS os arquivos do PC (nome, caminho)
+# historico_temp.db ....... histórico de navegação importado do Brave
+# banco_vetorial/ ......... embeddings dos documentos (conteúdo é recuperável dali)
+# Docs/ ................... documentos pessoais indexados
+# transcricoes/ ........... saída gerada a partir dos documentos pessoais
+# pastas_catalogadas.json . caminhos reais das pastas deste PC
+catalogo_arquivos.db
+historico_temp.db
+banco_vetorial/
+Docs/
+transcricoes/
+pastas_catalogadas.json
+# --- Ambiente: recriado no PC de destino via requirements.txt ---
+venv/
+__pycache__/
+*.pyc
+# --- Lixo de execução ---
+# Obs: .streamlit/config.toml (do projeto) VAI junto de propósito — é configuração
+# do projeto, não dado pessoal. O credentials.toml, esse sim por máquina, mora na
+# pasta do usuário (C:\Users\<voce>\.streamlit\), fora daqui.
+streamlit_out.log
+streamlit_err.log
+empty_stdin.txt
+.pytest_cache/
+.claude/settings.local.json

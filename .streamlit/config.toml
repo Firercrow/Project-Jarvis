@@ -1,0 +1,8 @@
+# Configuração do Streamlit deste projeto.
+#
+# Criado em 2026-08-29: sem isso, a PRIMEIRA execução do Streamlit num terminal
+# novo pede um e-mail ("Welcome to Streamlit!") e fica esperando o usuário
+# digitar — o servidor nunca sobe. Descoberto testando o iniciar_jarvis.bat
+# antes da demo, exatamente o tipo de coisa que travaria a apresentação.
+[browser]
+gatherUsageStats = false
